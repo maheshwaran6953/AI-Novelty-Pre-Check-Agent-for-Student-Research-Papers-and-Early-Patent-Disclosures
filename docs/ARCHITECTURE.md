@@ -9,7 +9,7 @@ Stack: **Angular + NestJS + PostgreSQL (Docker) + Prisma**. Locked pipeline, ret
 | Frontend | Angular 19+ (standalone components) | Required; pairs naturally with NestJS patterns |
 | Backend | **Node.js + NestJS (TypeScript)** | Single language with Angular; module/service/DI structure mirrors Angular |
 | ORM | **Prisma** | Schema-first, generated types, simple migrations — faster to scaffold correctly in one week than TypeORM |
-| Database | **PostgreSQL 16** via Docker Compose | One-command local setup; production-ready vs SQLite |
+| Database | **PostgreSQL 16** via Docker Compose (Port 5433) | One-command local setup; production-ready vs SQLite |
 | Embeddings storage | **Application-level cosine similarity** | No pgvector in v1 — see recommendation below |
 | Job execution | In-process background tasks (`@nestjs/bull` optional later; start with `EventEmitter` + async service) | Single-user demo; no Redis required initially |
 | File storage | Local `./data/uploads/` | Path stored in DB |
