@@ -14,7 +14,7 @@ export class LlmClient {
   constructor(private readonly configService: ConfigService) {
     const defaultApiKey = this.configService.get<string>('LLM_API_KEY');
     this.groqApiKey = this.configService.get<string>('GROQ_API_KEY') || (defaultApiKey?.startsWith('gsk_') ? defaultApiKey : undefined);
-    this.groqModel = this.configService.get<string>('GROQ_MODEL') || 'llama-3.3-70b-versatile';
+    this.groqModel = this.configService.get<string>('GROQ_MODEL') || 'llama-3.1-8b-instant';
     
     const geminiApiKey = this.configService.get<string>('GEMINI_API_KEY') || (defaultApiKey?.startsWith('gsk_') ? undefined : defaultApiKey);
     this.geminiModel = this.configService.get<string>('LLM_MODEL') || 'gemini-2.0-flash';

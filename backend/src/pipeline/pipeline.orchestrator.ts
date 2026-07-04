@@ -5,7 +5,9 @@ import { ExtractStage } from './stages/extract.stage';
 import { PlanQueriesStage } from './stages/plan-queries.stage';
 import { RetrieveStage } from './stages/retrieve.stage';
 import { FilterDedupStage } from './stages/filter-dedup.stage';
-import { StubbedStages } from './stages/stubbed.stages';
+import { ScoreStage } from './stages/score.stage';
+import { ExplainStage } from './stages/explain.stage';
+import { DeliverStage } from './stages/deliver.stage';
 import { PrismaService } from '../prisma/prisma.service';
 import { PipelineStage, JobStatus } from '@prisma/client';
 
@@ -18,7 +20,9 @@ export class PipelineOrchestrator {
     private readonly planQueriesStage: PlanQueriesStage,
     private readonly retrieveStage: RetrieveStage,
     private readonly filterDedupStage: FilterDedupStage,
-    private readonly stubbedStages: StubbedStages,
+    private readonly scoreStage: ScoreStage,
+    private readonly explainStage: ExplainStage,
+    private readonly deliverStage: DeliverStage,
   ) {}
 
   async startPipeline(jobId: string, filePath: string) {
@@ -46,16 +50,15 @@ export class PipelineOrchestrator {
       await this.filterDedupStage.execute(context);
 
       // 6. SCORE
-      await this.updateJobStage(jobId, PipelineStage.SCORE, 'Scoring novelty...');
-      await this.stubbedStages.score(context);
+      await this.updateJobStage(jobId, PipelineStage.SCORE, 'Scoring similarity against retrieved candidates...');
+      await this.scoreStage.execute(context);
 
       // 7. EXPLAIN
       await this.updateJobStage(jobId, PipelineStage.EXPLAIN, 'Generating explanations...');
-      await this.stubbedStages.explain(context);
+      await this.explainStage.execute(context);
 
       // 8. DELIVER
-      await this.updateJobStage(jobId, PipelineStage.DELIVER, 'Finalizing report...');
-      await this.stubbedStages.deliver(context); // This marks the job as COMPLETED
+      await this.deliverStage.execute(context);
 
     } catch (error) {
       console.error(`Job ${jobId} failed:`, error);

@@ -5,7 +5,9 @@ import { ExtractStage } from './stages/extract.stage';
 import { PlanQueriesStage } from './stages/plan-queries.stage';
 import { RetrieveStage } from './stages/retrieve.stage';
 import { FilterDedupStage } from './stages/filter-dedup.stage';
-import { StubbedStages } from './stages/stubbed.stages';
+import { ScoreStage } from './stages/score.stage';
+import { ExplainStage } from './stages/explain.stage';
+import { DeliverStage } from './stages/deliver.stage';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ClientsModule } from '../clients/clients.module';
 
@@ -18,7 +20,9 @@ import { ClientsModule } from '../clients/clients.module';
     PlanQueriesStage,
     RetrieveStage,
     FilterDedupStage,
-    StubbedStages
+    ScoreStage,
+    ExplainStage,
+    DeliverStage
   ],
   exports: [PipelineOrchestrator],
 })

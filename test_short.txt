@@ -1,0 +1,3 @@
+We introduce a novel hash map implementation called FastHash. 
+FastHash resolves hash collisions using a secondary neural network to predict optimal open addressing jumps.
+This reduces lookup time in dense tables by 40% compared to traditional linear probing.

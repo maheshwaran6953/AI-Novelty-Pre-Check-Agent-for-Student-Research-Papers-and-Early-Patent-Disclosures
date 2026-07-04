@@ -15,6 +15,18 @@ export interface PipelineQuery {
   claimIds: string[];
 }
 
+export interface ClaimMatch {
+  candidateId: string;
+  cosineSimilarity: number;
+  tier: 'significant_overlap' | 'related_work';
+  explanation?: string;
+}
+
+export interface ClaimScoring {
+  claimId: string;
+  matches: ClaimMatch[];
+}
+
 export interface PipelineContext {
   jobId: string;
   filePath: string;
@@ -22,4 +34,6 @@ export interface PipelineContext {
   extractedClaims?: any[];
   queries?: PipelineQuery[];
   candidates?: CandidateDocument[];
+  scoredClaims?: ClaimScoring[];
+  documentSummary?: string;
 }
