@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PipelineContext } from './pipeline.context';
 import { IngestStage } from './stages/ingest.stage';
 import { ExtractStage } from './stages/extract.stage';
+import { PlanQueriesStage } from './stages/plan-queries.stage';
+import { RetrieveStage } from './stages/retrieve.stage';
 import { StubbedStages } from './stages/stubbed.stages';
 import { PrismaService } from '../prisma/prisma.service';
 import { PipelineStage, JobStatus } from '@prisma/client';
@@ -12,6 +14,8 @@ export class PipelineOrchestrator {
     private readonly prisma: PrismaService,
     private readonly ingestStage: IngestStage,
     private readonly extractStage: ExtractStage,
+    private readonly planQueriesStage: PlanQueriesStage,
+    private readonly retrieveStage: RetrieveStage,
     private readonly stubbedStages: StubbedStages,
   ) {}
 
@@ -29,11 +33,11 @@ export class PipelineOrchestrator {
 
       // 3. PLAN_QUERIES
       await this.updateJobStage(jobId, PipelineStage.PLAN_QUERIES, 'Planning search queries...');
-      await this.stubbedStages.planQueries(context);
+      await this.planQueriesStage.execute(context);
 
       // 4. RETRIEVE
-      await this.updateJobStage(jobId, PipelineStage.RETRIEVE, 'Retrieving candidate documents...');
-      await this.stubbedStages.retrieve(context);
+      await this.updateJobStage(jobId, PipelineStage.RETRIEVE, 'Searching arXiv and Semantic Scholar...');
+      await this.retrieveStage.execute(context);
 
       // 5. FILTER_DEDUP
       await this.updateJobStage(jobId, PipelineStage.FILTER_DEDUP, 'Filtering and deduplicating...');
