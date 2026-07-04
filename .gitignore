@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+.angular/
+out-tsc/
+
+# NestJS
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# Uploads and local data (never commit user documents)
+data/
+uploads/
+backend/data/
+
+# Prisma
+backend/prisma/*.db
+backend/prisma/*.db-journal
+
+# Docker volumes (if mapped locally)
+postgres-data/
+
+# Misc
+*.pem
+.cache/
+tmp/
+temp/

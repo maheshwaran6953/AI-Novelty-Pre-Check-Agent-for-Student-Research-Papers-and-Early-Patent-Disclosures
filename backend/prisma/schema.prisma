@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum PipelineStage {
+  INGEST
+  EXTRACT
+  PLAN_QUERIES
+  RETRIEVE
+  FILTER_DEDUP
+  SCORE
+  EXPLAIN
+  DELIVER
+}
+
+model Job {
+  id               String         @id @default(uuid())
+  status           JobStatus      @default(QUEUED)
+  stage            PipelineStage  @default(INGEST)
+  progressMessage  String?        @map("progress_message")
+  originalFilename String         @map("original_filename")
+  uploadPath       String         @map("upload_path")
+  inputTruncated   Boolean        @default(false) @map("input_truncated")
+  truncationNote   String?        @map("truncation_note")
+  errorMessage     String?        @map("error_message")
+  claims           Json?
+  report           Json?
+  sourcesSearched  String[]       @default([]) @map("sources_searched")
+  sourcesSkipped   String[]       @default([]) @map("sources_skipped")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  completedAt      DateTime?      @map("completed_at")
+
+  @@map("jobs")
+}
