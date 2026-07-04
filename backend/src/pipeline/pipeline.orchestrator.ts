@@ -4,6 +4,7 @@ import { IngestStage } from './stages/ingest.stage';
 import { ExtractStage } from './stages/extract.stage';
 import { PlanQueriesStage } from './stages/plan-queries.stage';
 import { RetrieveStage } from './stages/retrieve.stage';
+import { FilterDedupStage } from './stages/filter-dedup.stage';
 import { StubbedStages } from './stages/stubbed.stages';
 import { PrismaService } from '../prisma/prisma.service';
 import { PipelineStage, JobStatus } from '@prisma/client';
@@ -16,6 +17,7 @@ export class PipelineOrchestrator {
     private readonly extractStage: ExtractStage,
     private readonly planQueriesStage: PlanQueriesStage,
     private readonly retrieveStage: RetrieveStage,
+    private readonly filterDedupStage: FilterDedupStage,
     private readonly stubbedStages: StubbedStages,
   ) {}
 
@@ -41,7 +43,7 @@ export class PipelineOrchestrator {
 
       // 5. FILTER_DEDUP
       await this.updateJobStage(jobId, PipelineStage.FILTER_DEDUP, 'Filtering and deduplicating...');
-      await this.stubbedStages.filterDedup(context);
+      await this.filterDedupStage.execute(context);
 
       // 6. SCORE
       await this.updateJobStage(jobId, PipelineStage.SCORE, 'Scoring novelty...');

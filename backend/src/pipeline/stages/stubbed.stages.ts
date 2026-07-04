@@ -7,24 +7,17 @@ import { JobStatus } from '@prisma/client';
 export class StubbedStages {
   constructor(private readonly prisma: PrismaService) {}
 
-  async filterDedup(context: PipelineContext): Promise<void> {
-    console.log(`\n\n[Job ${context.jobId}] filterDedup stage: not yet implemented`);
-    console.log(`[Job ${context.jobId}] --- PIPELINE STATE SUMMARY ---`);
+  async score(context: PipelineContext): Promise<void> {
+    console.log(`\n\n[Job ${context.jobId}] score stage: not yet implemented`);
+    console.log(`[Job ${context.jobId}] --- PIPELINE STATE SUMMARY (POST-FILTER) ---`);
     console.log(`[Job ${context.jobId}] Queries Planned: ${context.queries?.length || 0}`);
-    context.queries?.forEach((q, i) => {
-      console.log(`  Query ${i + 1}: ${q.query}`);
-    });
-    console.log(`[Job ${context.jobId}] Candidates Retrieved: ${context.candidates?.length || 0}`);
+    console.log(`[Job ${context.jobId}] Final Candidates: ${context.candidates?.length || 0}`);
     
     // Sample first 3 candidates
     context.candidates?.slice(0, 3).forEach((c, i) => {
       console.log(`  Sample ${i + 1}: [${c.source}] ${c.title}`);
     });
     console.log(`\n\n`);
-  }
-
-  async score(context: PipelineContext): Promise<void> {
-    console.log(`[Job ${context.jobId}] score stage: not yet implemented`);
   }
 
   async explain(context: PipelineContext): Promise<void> {
