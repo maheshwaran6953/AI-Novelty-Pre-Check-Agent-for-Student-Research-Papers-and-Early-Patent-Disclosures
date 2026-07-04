@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PipelineContext } from './pipeline.context';
 import { IngestStage } from './stages/ingest.stage';
+import { ExtractStage } from './stages/extract.stage';
 import { StubbedStages } from './stages/stubbed.stages';
 import { PrismaService } from '../prisma/prisma.service';
 import { PipelineStage, JobStatus } from '@prisma/client';
@@ -10,6 +11,7 @@ export class PipelineOrchestrator {
   constructor(
     private readonly prisma: PrismaService,
     private readonly ingestStage: IngestStage,
+    private readonly extractStage: ExtractStage,
     private readonly stubbedStages: StubbedStages,
   ) {}
 
@@ -22,8 +24,8 @@ export class PipelineOrchestrator {
       await this.ingestStage.execute(context);
 
       // 2. EXTRACT
-      await this.updateJobStage(jobId, PipelineStage.EXTRACT, 'Extracting claims...');
-      await this.stubbedStages.extract(context);
+      await this.updateJobStage(jobId, PipelineStage.EXTRACT, 'Extracting technical claims...');
+      await this.extractStage.execute(context);
 
       // 3. PLAN_QUERIES
       await this.updateJobStage(jobId, PipelineStage.PLAN_QUERIES, 'Planning search queries...');

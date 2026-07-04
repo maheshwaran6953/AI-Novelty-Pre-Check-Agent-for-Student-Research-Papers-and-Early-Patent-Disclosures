@@ -7,10 +7,6 @@ import { JobStatus } from '@prisma/client';
 export class StubbedStages {
   constructor(private readonly prisma: PrismaService) {}
 
-  async extract(context: PipelineContext): Promise<void> {
-    console.log(`[Job ${context.jobId}] extract stage: not yet implemented`);
-  }
-
   async planQueries(context: PipelineContext): Promise<void> {
     console.log(`[Job ${context.jobId}] planQueries stage: not yet implemented`);
   }

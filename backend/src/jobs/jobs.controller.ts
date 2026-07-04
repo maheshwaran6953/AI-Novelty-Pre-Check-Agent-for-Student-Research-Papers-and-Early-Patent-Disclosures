@@ -20,9 +20,9 @@ export class JobsController {
         },
       }),
       fileFilter: (req, file, callback) => {
-        // We do initial checking here but enforce with ParseFilePipe
-        const allowedMimeTypes = ['application/pdf', 'text/plain'];
-        if (!allowedMimeTypes.includes(file.mimetype)) {
+        const ext = extname(file.originalname).toLowerCase();
+        const allowedExtensions = ['.pdf', '.txt'];
+        if (!allowedExtensions.includes(ext)) {
           return callback(new BadRequestException('Only .pdf and .txt files are allowed'), false);
         }
         callback(null, true);
