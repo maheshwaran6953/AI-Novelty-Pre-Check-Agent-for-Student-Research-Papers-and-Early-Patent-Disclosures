@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Job, FinalReport } from '../models/job.model';
@@ -7,7 +7,9 @@ import { Job, FinalReport } from '../models/job.model';
   providedIn: 'root'
 })
 export class JobService {
-  private readonly baseUrl = 'http://localhost:3000/api/v1/jobs';
+  private readonly baseUrl = isDevMode() 
+    ? 'http://localhost:3000/api/v1/jobs' 
+    : 'https://ai-novelty-pre-check-agent-for-student.onrender.com/api/v1/jobs';
 
   constructor(private http: HttpClient) {}
 
