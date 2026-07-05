@@ -17,7 +17,7 @@ export class SemanticScholarClient {
     try {
       const url = `https://api.semanticscholar.org/graph/v1/paper/search?query=${encodeURIComponent(query)}&limit=${limit}&fields=title,abstract,url,externalIds`;
       
-      const response = await fetch(url);
+      const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
       if (!response.ok) {
         throw new Error(`Semantic Scholar API error: ${response.status} ${response.statusText}`);
       }

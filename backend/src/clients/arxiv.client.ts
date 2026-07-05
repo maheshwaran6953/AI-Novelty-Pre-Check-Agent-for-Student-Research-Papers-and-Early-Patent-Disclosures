@@ -9,7 +9,7 @@ export class ArxivClient {
   async search(query: string, maxResults: number = 10): Promise<CandidateDocument[]> {
     const url = `http://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&start=0&max_results=${maxResults}`;
     
-    const response = await fetch(url);
+    const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
     if (!response.ok) {
       throw new Error(`ArXiv API error: ${response.status} ${response.statusText}`);
     }
