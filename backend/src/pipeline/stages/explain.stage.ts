@@ -108,14 +108,36 @@ ${candidateContexts}
     });
 
     try {
-      const result = await this.llm.generateJson(prompt, schema);
+      let result;
+      let retries = 3;
+      let delay = 3000;
+      
+      while (retries > 0) {
+        try {
+          result = await this.llm.generateJson(prompt, schema);
+          break; // Success
+        } catch (e: any) {
+          if (e.status === 429 || e.message?.includes('429') || e.message?.includes('rate limit')) {
+            console.log(`[Job ${context.jobId}] Rate limit hit for claim ${scoredClaim.claimId}. Retrying in ${delay}ms...`);
+            retries--;
+            if (retries === 0) throw e;
+            await new Promise(r => setTimeout(r, delay));
+            delay *= 2; // Exponential backoff
+          } else {
+            throw e; // Non-rate limit error
+          }
+        }
+      }
+
       // Map explanations back
-      for (const match of scoredClaim.matches) {
-        const exp = result.explanations.find((e: any) => e.candidateId === match.candidateId);
-        if (exp) {
-          match.explanation = exp.explanation;
-        } else {
-          match.explanation = "This document shares semantic overlap with the claim concepts.";
+      if (result && result.explanations) {
+        for (const match of scoredClaim.matches) {
+          const exp = result.explanations.find((e: any) => e.candidateId === match.candidateId);
+          if (exp) {
+            match.explanation = exp.explanation;
+          } else {
+            match.explanation = "This document shares semantic overlap with the claim concepts.";
+          }
         }
       }
     } catch (err) {

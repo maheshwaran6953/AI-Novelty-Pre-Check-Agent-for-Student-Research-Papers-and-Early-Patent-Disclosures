@@ -71,6 +71,16 @@ export class ScoreStage {
 
       // Sort by score desc and take top matches
       matches.sort((a, b) => b.cosineSimilarity - a.cosineSimilarity);
+      
+      const allScoresForClaim = [];
+      for (let j = 0; j < candidates.length; j++) {
+        allScoresForClaim.push(this.cosineSimilarity(claimEmb, candidateEmbeddings[j]));
+      }
+      const maxScore = Math.max(...allScoresForClaim);
+      const minScore = Math.min(...allScoresForClaim);
+      
+      console.log(`[Job ${context.jobId}] Claim ${claim.claimId} -> Scored against ${candidates.length} candidates. Matches above 0.60: ${matches.length}. Max Score: ${maxScore.toFixed(3)}, Min Score: ${minScore.toFixed(3)}`);
+
       context.scoredClaims.push({
         claimId: claim.claimId,
         matches: matches.slice(0, TOP_MATCHES_PER_CLAIM)
