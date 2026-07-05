@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, timer } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Subscription, timer, of } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
 import { JobService } from '../../services/job.service';
 import { Job, JobStatus, PipelineStage } from '../../models/job.model';
 
@@ -197,9 +197,16 @@ export class JobStatusComponent implements OnInit, OnDestroy {
     
     // Poll every 3 seconds
     this.pollSub = timer(0, 3000).pipe(
-      switchMap(() => this.jobService.getJobStatus(this.jobId))
+      switchMap(() => this.jobService.getJobStatus(this.jobId).pipe(
+        catchError(err => {
+          console.warn('Temporary polling error (backend busy), retrying...', err);
+          return of(null);
+        })
+      ))
     ).subscribe({
       next: (job) => {
+        if (!job) return; // Ignore failed polling attempts
+        
         this.job = job;
         
         if (job.status === JobStatus.COMPLETED) {
@@ -211,8 +218,7 @@ export class JobStatusComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
-        console.error('Error fetching job status', err);
-        // Optionally halt polling on severe errors, or keep retrying
+        console.error('Fatal error in polling stream', err);
       }
     });
   }
