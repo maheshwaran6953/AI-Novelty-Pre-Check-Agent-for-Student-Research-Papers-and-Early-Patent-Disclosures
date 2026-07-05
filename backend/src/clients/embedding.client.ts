@@ -19,10 +19,15 @@ export class EmbeddingClient implements OnModuleInit {
   async embed(texts: string[]): Promise<number[][]> {
     if (!this.pipelineFn) throw new Error('Embedding pipeline not initialized');
     
-    // Pass texts as batch, request mean pooling and normalization (required for cosine similarity)
-    const output = await this.pipelineFn(texts, { pooling: 'mean', normalize: true });
+    const CHUNK_SIZE = 8;
+    let allEmbeddings: number[][] = [];
     
-    // output is a Tensor, tolist() converts it to nested JS arrays
-    return output.tolist();
+    for (let i = 0; i < texts.length; i += CHUNK_SIZE) {
+      const chunk = texts.slice(i, i + CHUNK_SIZE);
+      const output = await this.pipelineFn(chunk, { pooling: 'mean', normalize: true });
+      allEmbeddings = allEmbeddings.concat(output.tolist());
+    }
+    
+    return allEmbeddings;
   }
 }
